@@ -60,10 +60,34 @@ Plan Reader → Test Writer → Implementer → Verifier → Inspector → 完�
 ## 出力
 
 ```
-./docs/{topic}/impl.md  # 検査用実装サマリー
+./docs/{topic}/impl.md              # 外部検査の入力（固定フォーマット）
+./docs/{topic}/reviews/codex.md     # 外部検査結果
+./docs/{topic}/reviews/claude.md    # 外部検査結果
 ```
+
+## impl.md 出力仕様
+
+`./docs/{topic}/impl.md` は以下の **テンプレートそのまま** で作る（見出し/順序/セクションを増減しない）。
+
+```md
+# 実装サマリー
+
+## 達成したこと
+- ...
+- ...
+
+## レビューで見てほしい点
+- ...
+```
+
+**禁止（impl.md に書かない）**
+- 見出し: `## 変更ファイル` / `## 検証` / `## 想定コマンド`
+- ファイルパス/ファイル一覧（例: `app/e2e/tests/**`）
+- コマンド列（例: `cd ...`, `npm ...`, `pnpm ...`）
+- 実行できなかった理由（例: 「この実行環境では...」）
 
 ## Inspector（外部検査）の注意
 
 - `impl.md` はレビュー入力として使うため、`/shin-*` のスラッシュコマンドは入れない
-- 外部検査（codex/claude）はコマンド実行し、出力を `./docs/{topic}/reviews/` に保存して取り込む
+- 外部検査（codex/claude）は **必ずコマンド実行** し、出力を `./docs/{topic}/reviews/` に保存して取り込む
+- `./docs/{topic}/reviews/codex.md` と `./docs/{topic}/reviews/claude.md` が作成できていない場合は完了扱いにしない

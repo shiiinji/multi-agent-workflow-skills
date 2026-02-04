@@ -175,16 +175,8 @@ claude "/shin-reviewer 実装がテストを通過しません。[エラー内�
 ## 達成したこと
 - ...
 
-## 変更ファイル
+## レビューで見てほしい点
 - ...
-
-## 検証
-- テスト: ...
-- 型チェック: ...
-- Lint: ...
-
-## 追加メモ
-- 既知の制約/残課題があれば
 ```
 
 **外部検査の実行（ファイルに保存）:**
@@ -195,7 +187,12 @@ codex "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/co
 claude "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/claude.md
 ```
 
-このセッションで `./docs/{topic}/reviews/codex.md` と `./docs/{topic}/reviews/claude.md` を読み込み、指摘を反映する。
+このフェーズでは **上記コマンドを実際に実行** し、`./docs/{topic}/reviews/*.md` を **このセッションで読み込み**、指摘を反映する（省略しない）。
+
+**完了条件（Inspector）:**
+- `./docs/{topic}/reviews/codex.md` が存在する
+- `./docs/{topic}/reviews/claude.md` が存在する
+- 上記 2ファイルを読み込み、指摘対応が完了している
 
 **検査項目:**
 1. 成功条件がすべて満たされているか
@@ -219,16 +216,9 @@ claude "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/c
 ### 達成したこと
 - [実装内容の要約]
 
-### 変更ファイル
-| ファイル | 変更内容 |
-|---------|---------|
-| src/xxx.ts | 新規作成: XXX機能 |
-| src/__tests__/xxx.test.ts | テスト追加 |
-
-### 検証結果
-- テスト: X件 全て通過
-- 型チェック: OK
-- 外部検査: codex OK, claude OK
+### 外部検査
+- codex: OK（`./docs/{topic}/reviews/codex.md`）
+- claude: OK（`./docs/{topic}/reviews/claude.md`）
 
 ### 計画書のステータス
 - 完了: Step 1, 2, 3

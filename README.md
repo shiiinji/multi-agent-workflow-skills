@@ -106,7 +106,8 @@ orchestrator（エントリーポイント / --auto）
 | `qa-design.md` | qa-design |
 | `impl.md` | execute |
 | `retrospective.md` | summary --retrospective |
-| `learning.md` | summary --learning / repo-analyzer |
+| `learning.md` | summary --learning |
+| `repo-analyzer.md` | repo-analyzer |
 
 ## ディレクトリ構造
 

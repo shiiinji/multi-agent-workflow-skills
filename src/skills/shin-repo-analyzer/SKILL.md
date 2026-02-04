@@ -361,7 +361,7 @@ A: [回答]
 
 **保存先:**
 ```
-./docs/{topic}/learning.md
+./docs/{topic}/repo-analyzer.md
 ```
 
 **ルール（必須）**
@@ -370,7 +370,7 @@ A: [回答]
 - 書き込みできない場合は、勝手に別パス（例: `/tmp`）に出力せず、理由を説明してユーザーに確認する
 
 **完了条件（Definition of Done）**
-- `./docs/{topic}/learning.md` が存在し、最新の学習コンテンツが入っている
+- `./docs/{topic}/repo-analyzer.md` が存在し、最新の学習コンテンツが入っている
 - 最終レスポンスに出力ファイルパスを明記する
 
 ## 使用例
