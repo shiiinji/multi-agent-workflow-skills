@@ -1,15 +1,15 @@
-# shin-learner
+# shin-repo-analyzer
 
-コードベースを深く理解するための学習ワークフロー。
+リポジトリ（コードベース）を解析して深く理解するためのワークフロー。
 
 ## 概要
 
 | 項目 | 内容 |
 |------|------|
 | 対象ツール | Claude Code / Codex |
-| 用途 | オープンソース/プロジェクトの学習・理解 |
+| 用途 | リポジトリ/プロジェクトの解析・理解 |
 | 入力 | プロジェクトパス |
-| 出力 | 学習コンテンツ・学習ガイド |
+| 出力 | 解析サマリ・学習ガイド |
 
 **目的: 「使う」だけでなく「理解する」**
 
@@ -34,14 +34,14 @@
 ## 使用例
 
 ```bash
-# プロジェクト全体を学習
-/shin-learner /Users/shiiinji/code/example-repo
+# プロジェクト全体を解析
+/shin-repo-analyzer /Users/shiiinji/code/example-repo
 
 # 特定モジュールに絞る
-/shin-learner /Users/shiiinji/code/example-repo/src/workflows
+/shin-repo-analyzer /Users/shiiinji/code/example-repo/src/workflows
 
-# 学習目的を指定
-/shin-learner /Users/shiiinji/code/example-repo --focus "ワークフローエンジンの仕組み"
+# 解析目的を指定
+/shin-repo-analyzer /Users/shiiinji/code/example-repo --focus "ワークフローエンジンの仕組み"
 ```
 
 ## 出力形式

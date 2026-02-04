@@ -1,13 +1,13 @@
 ---
-name: shin-learner
-description: コードベースを深く理解するための学習ワークフロー。構造分析→設計理解→概念解説→学習パス作成の4段階で、オープンソースやプロジェクトを「使う」だけでなく「理解する」ための学習コンテンツを生成する。This skill should be used when you want to deeply understand a codebase, not just use it.
+name: shin-repo-analyzer
+description: リポジトリ（コードベース）を解析して深く理解するためのワークフロー。構造分析→設計理解→概念解説→学習パス作成の4段階で、オープンソースやプロジェクトを「使う」だけでなく「理解する」ための解析・学習コンテンツを生成する。This skill should be used when you want to deeply analyze and understand a repository/codebase, not just use it.
 metadata:
-  short-description: Codebase learning & understanding
+  short-description: Repository analysis & understanding
 ---
 
-# Multi Agent Learner Workflow
+# Multi Agent Repo Analyzer Workflow
 
-コードベースを深く理解するための学習ワークフロー。
+リポジトリ（コードベース）を解析して深く理解するためのワークフロー。
 
 **目的: 「使う」だけでなく「理解する」**
 
@@ -15,8 +15,8 @@ metadata:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    learner-workflow                             │
-│                    (コードベース学習)                            │
+│                 repo-analyzer-workflow                           │
+│                 (リポジトリ解析/理解)                            │
 └──────────────────────────┬──────────────────────────────────────┘
                            │
     ┌──────────────────────┼──────────────────────────────────────┐
@@ -32,13 +32,13 @@ metadata:
 **プロジェクトパス:**
 ```bash
 # ローカルプロジェクト
-/shin-learner /Users/shiiinji/code/example-repo
+/shin-repo-analyzer /Users/shiiinji/code/example-repo
 
 # 特定のモジュールに絞る
-/shin-learner /Users/shiiinji/code/example-repo/src/workflows
+/shin-repo-analyzer /Users/shiiinji/code/example-repo/src/workflows
 
-# 学習目的を指定
-/shin-learner /Users/shiiinji/code/example-repo --focus "ワークフローエンジンの仕組み"
+# 解析目的を指定
+/shin-repo-analyzer /Users/shiiinji/code/example-repo --focus "ワークフローエンジンの仕組み"
 ```
 
 ## Workflow
@@ -378,7 +378,7 @@ A: [回答]
 ### 例1: オープンソースプロジェクトの学習
 
 ```
-ユーザー: /shin-learner /Users/shiiinji/code/example-repo
+ユーザー: /shin-repo-analyzer /Users/shiiinji/code/example-repo
 
 Phase 1 (Explorer):
 - YAML ベースのワークフローエンジン
@@ -404,7 +404,7 @@ Phase 4 (Guide):
 ### 例2: 特定モジュールの深掘り
 
 ```
-ユーザー: /shin-learner /Users/shiiinji/code/example-repo/src/agents --focus "エージェントの仕組み"
+ユーザー: /shin-repo-analyzer /Users/shiiinji/code/example-repo/src/agents --focus "エージェントの仕組み"
 
 → エージェントモジュールに特化した学習コンテンツを生成
 ```
@@ -420,11 +420,11 @@ orchestrator
     │
     ├─ consultant
     │
-    └─ learner ← 既存コードを理解したい時
+    └─ repo-analyzer ← 既存コードを理解したい時
 ```
 
 **使い分け:**
 - 新規実装: planner → execute
-- 既存コード理解: **learner**
+- 既存コード理解: **repo-analyzer**
 - 技術相談: consultant
 - レビュー: reviewer

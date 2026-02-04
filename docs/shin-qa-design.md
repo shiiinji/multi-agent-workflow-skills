@@ -14,12 +14,12 @@ QA観点からテスト戦略を総合的に設計するワークフロー。
 ## 位置づけ
 
 ```
-planner-workflow → qa-design-workflow → tdd-workflow / execute-workflow
+planner-workflow → qa-design-workflow → execute-workflow → summary-workflow
                         ↑
                       今ここ
 ```
 
-tdd-workflow が「テストを書いて実装する」実行フェーズなのに対し、qa-design-workflow は「何をどうテストするか」を設計する計画フェーズ。
+execute-workflow が「テストを書いて実装する」実行フェーズなのに対し、qa-design-workflow は「何をどうテストするか」を設計する計画フェーズ。
 
 ## ワークフロー
 
@@ -47,8 +47,11 @@ tdd-workflow が「テストを書いて実装する」実行フェーズなの�
 # 2. テスト設計を行う
 /shin-qa-design ./docs/{topic}/plan.md
 
-# 3. TDD で実装（テスト設計書を参照）
-/shin-tdd ./docs/{topic}/plan.md
+# 3. 実装・検証（テスト設計書を参照）
+/shin-execute ./docs/{topic}/plan.md
+
+# 4. 振り返り・学習コンテンツ
+/shin-summary ./docs/{topic}/plan.md --all
 ```
 
 ## 出力: テスト設計書
@@ -77,16 +80,16 @@ tdd-workflow が「テストを書いて実装する」実行フェーズなの�
 | ログインフロー | 1. ... 2. ... | ... |
 ```
 
-## tdd-workflow との連携
+## execute-workflow との連携
 
-qa-design-workflow で作成したテスト設計書を、tdd-workflow の Test Writer フェーズで参照する：
+qa-design-workflow で作成したテスト設計書を、execute-workflow の Test Writer フェーズで参照する：
 
 ```
 qa-design-workflow
     │
     │ テスト設計書（何をテストするか）
     ▼
-tdd-workflow
+execute-workflow
     │
     │ Test Writer（設計書を元にテストコード作成）
     │ Implementer（テストが通る実装）

@@ -15,12 +15,17 @@
 
 オーケストレーターが状況を分析し、最適なワークフローを推奨します。
 
+**人の介入なしで最後まで回す場合:**
+```bash
+/shin-orchestrator --auto [やりたいこと]
+```
+
 ## 全体フロー
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                   orchestrator-workflow                         │
-│                   (エントリーポイント・推奨提示)                  │
+│                   (エントリーポイント・推奨提示/--auto)            │
 └──────────────────────────┬──────────────────────────────────────┘
                            │ 推奨
                            ▼
@@ -31,7 +36,7 @@
                            │ 計画書ファイル
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   qa-design-workflow（任意）                     │
+│                   qa-design-workflow                            │
 │                   (テスト設計書を出力)                           │
 └──────────────────────────┬──────────────────────────────────────┘
                            │ テスト設計書ファイル
@@ -43,7 +48,7 @@
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   summary-workflow（任意）                       │
+│                   summary-workflow                              │
 │                   (振り返りレポート・学習コンテンツ)              │
 └──────────────────────────┬──────────────────────────────────────┘
                            │
@@ -69,8 +74,8 @@
          └─────────────────────────────────────┘
 
          ┌─────────────────────────────────────┐
-         │         learner-workflow            │
-         │        (コードベース学習)            │
+         │      repo-analyzer-workflow         │
+         │       (リポジトリ解析/理解)          │
          │                                     │
          │  Explorer → Architect → Educator   │
          │  ← 既存コードを理解したい時         │
@@ -87,8 +92,9 @@
 | execute | 実装（テスト+実装+検証+検査） | 計画書ファイル | 実装 |
 | reviewer | レビュー | 計画書/設計書/実装/エラー | フィードバック |
 | summary | 振り返り・学習コンテンツ | 計画書ファイル | レポート/コンテンツ |
+| spec-updater | 仕様書更新（コード + チャットログ） | 仕様書 +（任意）スレッドログ | 更新済み仕様書 |
 | **consultant** | **3者合議（技術相談）** | 相談事項 | 合議判定・推奨 |
-| **learner** | **コードベース学習** | プロジェクトパス | 学習コンテンツ |
+| **repo-analyzer** | **リポジトリ解析/理解** | プロジェクトパス | 解析サマリ・学習コンテンツ |
 | sequence-diagram | シーケンス図生成（User/Frontend/Backend/DB） | フロー説明/API仕様 | Mermaid シーケンス図 |
 
 ## 典型的なフロー
@@ -105,12 +111,18 @@
 
 # 3. 次を確認
 /shin-orchestrator 次は？
-# → qa-design or execute を推奨
+# → qa-design を推奨
 
 # 4. 推奨に従う
 /shin-qa-design ./docs/{topic}/plan.md
 
-# ...繰り返し
+# 5. 次を確認 → execute
+/shin-orchestrator 次は？
+/shin-execute ./docs/{topic}/plan.md
+
+# 6. 次を確認 → summary
+/shin-orchestrator 次は？
+/shin-summary ./docs/{topic}/plan.md --all
 ```
 
 ### パターン B: フル QA フロー
@@ -119,21 +131,23 @@
 /shin-planner ユーザー認証機能を追加したい
 /shin-qa-design ./docs/{topic}/plan.md
 /shin-execute ./docs/{topic}/plan.md
+/shin-summary ./docs/{topic}/plan.md --all
 ```
 
-### パターン C: シンプルフロー（テストなし）
+### パターン C: auto-mode（人の介入なし）
 
 ```bash
-/shin-planner UIコンポーネントを追加したい
-/shin-execute ./docs/{topic}/plan.md
+/shin-orchestrator --auto ユーザー認証機能を追加したい
 ```
 
-### パターン D: 振り返り・学習コンテンツ作成
+### パターン D: 振り返りのみ / 学習のみ
 
 ```bash
 /shin-planner ユーザー認証機能を追加したい
+/shin-qa-design ./docs/{topic}/plan.md
 /shin-execute ./docs/{topic}/plan.md
-/shin-summary ./docs/{topic}/plan.md --all
+/shin-summary ./docs/{topic}/plan.md --retrospective
+# or: /shin-summary ./docs/{topic}/plan.md --learning
 ```
 
 ### パターン E: レビューのみ
@@ -148,10 +162,10 @@
 /shin-consultant "Redux vs Zustand どちらを採用すべき？"
 ```
 
-### パターン G: コードベース学習
+### パターン G: リポジトリ解析（コードベース理解）
 
 ```bash
-/shin-learner /Users/shiiinji/code/example-repo
+/shin-repo-analyzer /Users/shiiinji/code/example-repo
 ```
 
 ## インストール
@@ -170,8 +184,9 @@
 - [shin-execute](./shin-execute.md) - 実装
 - [shin-reviewer](./shin-reviewer.md) - レビュー
 - [shin-summary](./shin-summary.md) - 振り返り・学習コンテンツ
+- [shin-spec-updater](./shin-spec-updater.md) - 仕様書更新（コード + チャットログ）
 - [shin-consultant](./shin-consultant.md) - 3者合議（技術相談）
-- [shin-learner](./shin-learner.md) - コードベース学習
+- [shin-repo-analyzer](./shin-repo-analyzer.md) - リポジトリ解析（コードベース理解）
 
 ## ディレクトリ構造
 
@@ -186,7 +201,7 @@ multi-agent-workflow-skills/
 │   ├── shin-reviewer.md
 │   ├── shin-summary.md
 │   ├── shin-consultant.md
-│   └── shin-learner.md
+│   └── shin-repo-analyzer.md
 ├── src/
 │   └── skills/                        # 共通スキル（実装）
 │       ├── shin-orchestrator/
@@ -203,7 +218,7 @@ multi-agent-workflow-skills/
 │       │   └── SKILL.md
 │       ├── shin-consultant/
 │       │   └── SKILL.md
-│       └── shin-learner/
+│       └── shin-repo-analyzer/
 │           └── SKILL.md
 └── install.sh                         # インストールスクリプト
 ```

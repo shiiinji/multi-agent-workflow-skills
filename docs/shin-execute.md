@@ -14,7 +14,7 @@
 ## 位置づけ
 
 ```
-planner-workflow → qa-design-workflow（任意） → execute-workflow → summary-workflow
+planner-workflow → qa-design-workflow → execute-workflow → summary-workflow
                                                       ↑
                                                     今ここ
 ```
@@ -26,19 +26,16 @@ planner-workflow → qa-design-workflow（任意） → execute-workflow → sum
 │ Plan Reader │ ──▶ │ Test Writer │ ──▶ │ Implementer │ ──▶ │  Verifier   │ ──▶ │  Inspector  │
 │ (計画読込)   │     │ (テスト作成) │     │ (実装)       │     │ (自動検証)   │     │ (外部検査)   │
 └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-                          │
-                    qa-design なし
-                          │
-                          ▼
-                       スキップ
+
+※ `qa-design.md` がない場合は、先に `/shin-qa-design ./docs/{topic}/plan.md` を実行してから進みます
 ```
 
 ## フェーズ説明
 
 | Phase | 名前 | 内容 |
 |-------|------|------|
-| 1 | Plan Reader | 計画書読込、qa-design 有無確認 |
-| 2 | Test Writer | テスト作成（qa-design があれば） |
+| 1 | Plan Reader | 計画書読込、qa-design 読込 |
+| 2 | Test Writer | テスト作成（qa-design に基づく） |
 | 3 | Implementer | 実装 |
 | 4 | Verifier | 自動テスト検証 |
 | 5 | Inspector | 外部検査（別LLMレビュー） |
@@ -46,19 +43,13 @@ planner-workflow → qa-design-workflow（任意） → execute-workflow → sum
 ## 使用例
 
 ```bash
-# qa-design ありの場合（テスト込み）
 /shin-planner ユーザー認証機能を追加したい
 /shin-qa-design ./docs/{topic}/plan.md
 /shin-execute ./docs/{topic}/plan.md
-
-# qa-design なしの場合（テストなし）
-/shin-planner UIコンポーネントを追加したい
-/shin-execute ./docs/{topic}/plan.md
+/shin-summary ./docs/{topic}/plan.md --all
 ```
 
 ## 動作パターン
-
-### qa-design あり
 
 ```
 Plan Reader → Test Writer → Implementer → Verifier → Inspector → 完了
@@ -66,16 +57,13 @@ Plan Reader → Test Writer → Implementer → Verifier → Inspector → 完�
                                  └── 失敗 ────┘ (最大3回)
 ```
 
-### qa-design なし
-
-```
-Plan Reader → Implementer → Verifier → Inspector → 完了
-                   ↑                       │
-                   └────── 問題あり ───────┘ (最大3回)
-```
-
 ## 出力
 
 ```
 ./docs/{topic}/impl.md  # 検査用実装サマリー
 ```
+
+## Inspector（外部検査）の注意
+
+- `impl.md` はレビュー入力として使うため、`/shin-*` のスラッシュコマンドは入れない
+- 外部検査（codex/claude）はコマンド実行し、出力を `./docs/{topic}/reviews/` に保存して取り込む

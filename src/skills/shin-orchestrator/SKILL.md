@@ -23,17 +23,25 @@ metadata:
 │  4. 次のステップ提示                                             │
 └─────────────────────────────────────────────────────────────────┘
                            │
-          ┌────────────────┼────────────────┐
-          ▼                ▼                ▼
-    ┌──────────┐    ┌──────────┐    ┌──────────┐
-    │ planner  │    │ qa-design│    │ reviewer │
-    └────┬─────┘    └────┬─────┘    └──────────┘
-         │               │
-         └───────┬───────┘
-                 ▼
-           ┌──────────┐
-           │ execute  │
-           └──────────┘
+                           ▼
+                     ┌──────────┐
+                     │ planner  │
+                     └────┬─────┘
+                          ▼
+                     ┌──────────┐
+                     │ qa-design│
+                     └────┬─────┘
+                          ▼
+                     ┌──────────┐
+                     │ execute  │
+                     └────┬─────┘
+                          ▼
+                     ┌──────────┐
+                     │ summary  │
+                     └──────────┘
+
+補助:
+  reviewer  ← いつでもレビュー/トラブル対応
 ```
 
 ## 入力
@@ -48,7 +56,23 @@ metadata:
 
 # ファイルを指定する場合
 /shin-orchestrator ./docs/{topic}/plan.md の次のステップは？
+
+# auto-mode（人の介入を挟まずに最後まで実行）
+/shin-orchestrator --auto ユーザー認証機能を追加したい
 ```
+
+## Mode
+
+| モード | 挙動 |
+|------|------|
+| デフォルト | 推奨提示のみ（次に実行すべきワークフローとコマンドを出す） |
+| `--auto` | planner → qa-design → execute → summary を**このセッションで連続実行**する（途中の人の介入なし） |
+
+### auto-mode のルール
+
+- 途中でユーザー入力を要求しない（不明点は仮定し、`plan.md` の「疑義事項・要確認」に記録する）
+- 生成物は `./docs/{topic}/` に出力する（topic が未指定ならタスク名から推定する）
+- 外部レビュー（別セッション）が必要な手順は、まず自己レビューで進め、必要なら最後に `/shin-reviewer` を提案する
 
 ## Workflow
 
@@ -71,12 +95,13 @@ metadata:
 **状況判定:**
 ```
 新規タスク
-├─ 計画書なし → planner-workflow を推奨
-└─ 計画書あり
-    ├─ テスト設計書なし → qa-design-workflow を推奨（任意）
-    └─ テスト設計書あり or スキップ → execute-workflow を推奨
+└─ planner-workflow
 
-レビュー依頼 → reviewer-workflow を推奨
+計画書あり → qa-design-workflow
+テスト設計書あり → execute-workflow
+実装完了 → summary-workflow
+
+レビュー依頼 / 問題発生 → reviewer-workflow
 ```
 
 ## Phase 2: Selector（ワークフロー選択）
@@ -85,15 +110,13 @@ metadata:
 
 **選択基準:**
 
-| 状況 | 推奨ワークフロー |
+| 状況 | 次に実行するワークフロー |
 |------|-----------------|
 | 何もない状態 | planner-workflow |
-| 計画書がある | qa-design-workflow（推奨）or execute |
+| 計画書がある | qa-design-workflow |
 | テスト設計書がある | execute-workflow |
-| テストなしで実装したい | execute-workflow |
-| レビューしてほしい | reviewer-workflow |
-| 問題が発生した | reviewer-workflow（トラブルシューティング） |
 | 実装完了後 | summary-workflow |
+| レビューしてほしい / 問題が発生した | reviewer-workflow（トラブルシューティング） |
 
 ## Phase 3: Presenter（推奨提示）
 
@@ -106,8 +129,9 @@ metadata:
 | 項目 | ステータス |
 |------|-----------|
 | 計画書 | ✅ あり / ❌ なし |
-| テスト設計書 | ✅ あり / ❌ なし / ⏭️ スキップ |
+| テスト設計書 | ✅ あり / ❌ なし |
 | 実装 | ✅ 完了 / 🔄 進行中 / ❌ 未着手 |
+| 振り返り（summary） | ✅ 完了 / ❌ 未実施 |
 
 ## 推奨: [ワークフロー名]
 
@@ -124,15 +148,14 @@ metadata:
 
 \`\`\`
 [1] planner    ✅ 完了
-[2] qa-design  ⏭️ スキップ
-[3] execute    🔄 次はここ
+[2] qa-design  🔄 次はここ
+[3] execute    ⏳ 待機中
 [4] summary    ⏳ 待機中
 \`\`\`
 
 ## 他の選択肢
 
-- `/shin-qa-design` - テスト設計を行う場合
-- `/shin-execute` - 直接実装する場合
+- `/shin-reviewer` - レビュー/トラブルシューティング
 ```
 
 ## 使用例
@@ -178,9 +201,6 @@ metadata:
 \`\`\`bash
 /shin-qa-design ./docs/{topic}/plan.md
 \`\`\`
-
-## 他の選択肢
-- `/shin-execute ./docs/{topic}/plan.md` - テスト設計をスキップして直接実装
 ```
 
 ### 例3: 問題発生時
@@ -204,6 +224,18 @@ metadata:
 \`\`\`
 ```
 
+### 例4: auto-mode
+
+```
+ユーザー: /shin-orchestrator --auto ユーザー認証機能を追加したい
+
+出力（要約）:
+- plan.md を作成
+- qa-design.md を作成
+- テスト作成 → 実装 → 自動検証 → 検査
+- retrospective.md / learning.md を作成（デフォルト: --all）
+```
+
 ## ワークフロー一覧（リファレンス）
 
 | ワークフロー | 用途 | 入力 |
@@ -222,12 +254,12 @@ metadata:
 /shin-planner [タスク]
     ↓
 /shin-orchestrator 次は？
-    ↓ 推奨: qa-design or execute
-/shin-qa-design [plan]  # 任意
+    ↓ 推奨: qa-design
+/shin-qa-design [plan]
     ↓
 /shin-execute [plan]
     ↓
-/shin-summary [plan]  # 任意
+/shin-summary [plan]
     ↓
 完了！
 ```

@@ -20,24 +20,24 @@ Claude Code / Codex 向けのマルチエージェントワークフロースキ
 ## ワークフロー全体図
 
 ```
-orchestrator（エントリーポイント）
+orchestrator（エントリーポイント / --auto）
        │
        ▼
    planner（計画書作成）
        │
        ▼
-  qa-design（テスト設計）※任意
+  qa-design（テスト設計）
        │
        ▼
    execute（実装・検証）
        │
        ▼
-   summary（振り返り）※任意
+   summary（振り返り）
 
 補助:
   reviewer  ← 各フェーズからレビュー依頼
   consultant ← 技術的意思決定時に3者合議
-  learner   ← 既存コードベースの学習
+  repo-analyzer ← リポジトリ解析（コードベース理解）
 ```
 
 ## スキル一覧
@@ -50,9 +50,10 @@ orchestrator（エントリーポイント）
 | `/shin-execute` | 実装・検証・検査 | `/shin-execute ./docs/{topic}/plan.md` |
 | `/shin-reviewer` | レビュー・フィードバック | `/shin-reviewer $(cat ./docs/{topic}/plan.md)` |
 | `/shin-consultant` | 3者合議による意思決定 | `/shin-consultant "Redux vs Zustand?"` |
-| `/shin-learner` | コードベース学習 | `/shin-learner /path/to/project` |
+| `/shin-repo-analyzer` | リポジトリ解析（コードベース理解） | `/shin-repo-analyzer /path/to/project` |
 | `/shin-sequence-diagram` | ユーザー/フロント/バックエンド/DB のフローをシーケンス図（Mermaid）にする | `/shin-sequence-diagram ログインの流れを図にして` |
 | `/shin-summary` | 振り返り・学習コンテンツ作成 | `/shin-summary ./docs/{topic}/plan.md --all` |
+| `/shin-spec-updater` | 仕様書の更新（最新コード + チャットログから整合） | `/shin-spec-updater ./docs/{topic}/impl.md --thread /path/to/thread.md` |
 
 ## 典型的なフロー
 
@@ -75,11 +76,10 @@ orchestrator（エントリーポイント）
 # → 振り返りレポート & 学習コンテンツ出力
 ```
 
-### シンプルフロー（テスト設計スキップ）
+### auto-mode（人の介入なし）
 
 ```bash
-/shin-planner UIコンポーネントを追加したい
-/shin-execute ./docs/ui-component/plan.md
+/shin-orchestrator --auto UIコンポーネントを追加したい
 ```
 
 ### 技術相談
@@ -89,10 +89,10 @@ orchestrator（エントリーポイント）
 # → IMPL/ARCH/QA の3視点で分析 → 多数決で判定
 ```
 
-### コードベース学習
+### リポジトリ解析（コードベース理解）
 
 ```bash
-/shin-learner /path/to/open-source-project --focus "認証の仕組み"
+/shin-repo-analyzer /path/to/open-source-project --focus "認証の仕組み"
 # → 学習コンテンツ出力
 ```
 
@@ -106,7 +106,7 @@ orchestrator（エントリーポイント）
 | `qa-design.md` | qa-design |
 | `impl.md` | execute |
 | `retrospective.md` | summary --retrospective |
-| `learning.md` | summary --learning / learner |
+| `learning.md` | summary --learning / repo-analyzer |
 
 ## ディレクトリ構造
 

@@ -14,7 +14,7 @@
 ## 位置づけ
 
 ```
-planner → tdd/execute → summary ← reviewer
+planner → qa-design → execute → summary ← reviewer
                            ↑
                          今ここ
 ```

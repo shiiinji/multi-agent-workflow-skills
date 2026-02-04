@@ -18,8 +18,9 @@ SKILLS=(
     "shin-execute"
     "shin-reviewer"
     "shin-summary"
+    "shin-spec-updater"
     "shin-consultant"
-    "shin-learner"
+    "shin-repo-analyzer"
     "shin-sequence-diagram"
 )
 
@@ -34,6 +35,7 @@ OLD_SKILLS=(
     "multi-agent-summary-workflow"
     "multi-agent-consultant-workflow"
     "multi-agent-learner-workflow"
+    "shin-learner"
 )
 
 echo "🚀 Installing Shin Workflow Skills..."
@@ -101,6 +103,7 @@ echo "    /shin-qa-design <plan>       # QAテスト設計"
 echo "    /shin-execute <plan>         # 実装（テスト+実装+検証+検査）"
 echo "    /shin-reviewer <content>     # レビュー"
 echo "    /shin-summary <plan>         # 振り返り・学習コンテンツ"
+echo "    /shin-spec-updater <spec>    # 仕様書更新（コード + チャットログ）"
 echo "    /shin-consultant <topic>     # 3者合議（技術相談）"
-echo "    /shin-learner <path>         # コードベース学習"
+echo "    /shin-repo-analyzer <path>   # リポジトリ解析（コードベース理解）"
 echo "    /shin-sequence-diagram <flow> # シーケンス図（User/FE/BE/DB）"

@@ -8,7 +8,7 @@
 |------|------|
 | 対象ツール | Claude Code / Codex |
 | 用途 | ワークフローの選択・進捗管理 |
-| 動作モード | 推奨提示（実行は行わない） |
+| 動作モード | 推奨提示 / `--auto`（連続実行） |
 
 ## 位置づけ
 
@@ -20,7 +20,7 @@
                            │ 推奨
                            ▼
     ┌──────────────────────────────────────────────────────┐
-    │  planner → qa-design → tdd/execute ← reviewer       │
+    │  planner → qa-design → execute → summary ← reviewer │
     └──────────────────────────────────────────────────────┘
 ```
 
@@ -80,11 +80,9 @@
 ```
 入力分析
 ├─ 計画書なし → planner 推奨
-├─ 計画書あり
-│   ├─ テスト設計書なし → qa-design 推奨（任意）
-│   └─ テスト設計書あり or スキップ
-│       ├─ TDD 対象あり → tdd 推奨
-│       └─ TDD 対象なし → execute 推奨
+├─ 計画書あり → qa-design 推奨
+├─ テスト設計書あり → execute 推奨
+├─ 実装完了 → summary 推奨
 └─ レビュー依頼 or エラー → reviewer 推奨
 ```
 
@@ -96,8 +94,9 @@
 | 項目 | ステータス |
 |------|-----------|
 | 計画書 | ✅ あり / ❌ なし |
-| テスト設計書 | ✅ あり / ❌ なし / ⏭️ スキップ |
+| テスト設計書 | ✅ あり / ❌ なし |
 | 実装 | ✅ 完了 / 🔄 進行中 / ❌ 未着手 |
+| 振り返り（summary） | ✅ 完了 / ❌ 未実施 |
 
 ## 推奨: [ワークフロー名]
 
@@ -111,9 +110,9 @@
 ## 全体の進捗
 
 [1] planner    ✅ 完了
-[2] qa-design  ⏭️ スキップ
-[3] tdd        🔄 次はここ
-[4] execute    ⏳ 待機中
+[2] qa-design  🔄 次はここ
+[3] execute    ⏳ 待機中
+[4] summary    ⏳ 待機中
 
 ## 他の選択肢
 - [代替ワークフロー]
@@ -134,5 +133,19 @@
 # 4. 推奨に従って実行
 /shin-qa-design [plan]
 
-# ...繰り返し
+# 5. 次のステップを確認 → execute
+/shin-orchestrator 次は？
+/shin-execute [plan]
+
+# 6. 次のステップを確認 → summary
+/shin-orchestrator 次は？
+/shin-summary [plan] --all
 ```
+
+## auto-mode（人の介入なし）
+
+```bash
+/shin-orchestrator --auto [タスク説明]
+```
+
+planner → qa-design → execute → summary をこのセッションで連続実行します。
