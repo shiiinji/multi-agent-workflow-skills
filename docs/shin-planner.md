@@ -56,9 +56,11 @@
 **レビュー依頼方法:**
 ```bash
 # 別のセッションで shin-reviewer を使用
-codex "/shin-reviewer $(cat ./docs/{topic}/plan.md)"
-# または
-claude "/shin-reviewer $(cat ./docs/{topic}/plan.md)"
+# Codex は非対話の exec を使う（stdin が terminal でない環境でも動く）
+codex exec "/shin-reviewer $(cat ./docs/{topic}/plan.md)"
+# Claude は --print で非対話実行。必要なら HOME を writable に向ける
+mkdir -p ./.tmp/claude-home
+HOME="$PWD/.tmp/claude-home" claude -p "/shin-reviewer $(cat ./docs/{topic}/plan.md)"
 ```
 
 ### Phase 4: 改善（計画の洗練）

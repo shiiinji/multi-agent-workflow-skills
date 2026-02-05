@@ -149,8 +149,12 @@ pnpm lint
 自動検証が3回失敗しました。外部レビューを実行してください（両方）:
 
 \`\`\`bash
-codex "/shin-reviewer 実装がテストを通過しません。[エラー内容]"
-claude "/shin-reviewer 実装がテストを通過しません。[エラー内容]"
+# Codex は非対話の exec を使う（stdin が terminal でない環境でも動く）
+codex exec "/shin-reviewer 実装がテストを通過しません。[エラー内容]"
+
+# Claude は --print で非対話実行。必要なら HOME を writable に向ける
+mkdir -p ./.tmp/claude-home
+HOME="$PWD/.tmp/claude-home" claude -p "/shin-reviewer 実装がテストを通過しません。[エラー内容]"
 \`\`\`
 ```
 
@@ -183,11 +187,23 @@ claude "/shin-reviewer 実装がテストを通過しません。[エラー内�
 ```bash
 mkdir -p ./docs/{topic}/reviews
 
-codex "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/codex.md
-claude "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/claude.md
+# Codex は非対話の exec を使う（stdin が terminal でない環境でも動く）
+codex exec "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/codex.md
+
+# Claude は --print で非対話実行。必要なら HOME を writable に向ける
+mkdir -p ./.tmp/claude-home
+HOME="$PWD/.tmp/claude-home" claude -p "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/claude.md
 ```
 
 このフェーズでは **上記コマンドを実際に実行** し、`./docs/{topic}/reviews/*.md` を **このセッションで読み込み**、指摘を反映する（省略しない）。
+
+**よくある失敗と対処:**
+- `codex ...` 実行で `Error: stdin is not a terminal` → `codex exec ...` を使う（上記）
+- `claude ...` 実行で `EPERM ... ~/.claude.json` → `HOME` をプロジェクト配下の writable へ向ける（上記）
+- `claude` が「`1.0.88` 以上へ更新が必要」→ `claude update`（または更新手順）で CLI を更新して再実行
+
+**それでも外部レビューが取得できない場合（代替）:**
+- `./docs/{topic}/reviews/codex.md` / `./docs/{topic}/reviews/claude.md` を作成し、(1) 実行できなかった理由（エラー全文）(2) セルフレビュー（指摘/確認観点）を記録して先に進む
 
 **完了条件（Inspector）:**
 - `./docs/{topic}/reviews/codex.md` が存在する

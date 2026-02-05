@@ -91,3 +91,17 @@ Plan Reader → Test Writer → Implementer → Verifier → Inspector → 完�
 - `impl.md` はレビュー入力として使うため、`/shin-*` のスラッシュコマンドは入れない
 - 外部検査（codex/claude）は **必ずコマンド実行** し、出力を `./docs/{topic}/reviews/` に保存して取り込む
 - `./docs/{topic}/reviews/codex.md` と `./docs/{topic}/reviews/claude.md` が作成できていない場合は完了扱いにしない
+
+**実行例（非対話でファイルに保存）:**
+```bash
+mkdir -p ./docs/{topic}/reviews
+
+# Codex は非対話の exec を使う（stdin が terminal でない環境でも動く）
+codex exec "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/codex.md
+
+# Claude は --print で非対話実行。必要なら HOME を writable に向ける
+mkdir -p ./.tmp/claude-home
+HOME="$PWD/.tmp/claude-home" claude -p "/shin-reviewer $(cat ./docs/{topic}/impl.md)" > ./docs/{topic}/reviews/claude.md
+```
+
+**外部レビューが取得できない場合:** 2つのレビュー結果ファイルに「実行できなかった理由」と「セルフレビュー（指摘/確認観点）」を記録して代替する

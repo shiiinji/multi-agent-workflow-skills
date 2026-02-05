@@ -248,8 +248,12 @@ git diff [base branch]
 
 **実行方法（両方に実行）:**
 ```bash
-codex "/shin-reviewer [出力ファイルパス] をレビューして"
-claude "/shin-reviewer [出力ファイルパス] をレビューして"
+# Codex は非対話の exec を使う（stdin が terminal でない環境でも動く）
+codex exec "/shin-reviewer [出力ファイルパス] をレビューして"
+
+# Claude は --print で非対話実行。必要なら HOME を writable に向ける
+mkdir -p ./.tmp/claude-home
+HOME="$PWD/.tmp/claude-home" claude -p "/shin-reviewer [出力ファイルパス] をレビューして"
 ```
 
 ## 出力

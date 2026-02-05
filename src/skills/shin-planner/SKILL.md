@@ -80,8 +80,12 @@ metadata:
 
 **レビュー依頼（両方に実行）:**
 ```bash
-codex "/shin-reviewer $(cat ./docs/{topic}/plan.md)"
-claude "/shin-reviewer $(cat ./docs/{topic}/plan.md)"
+# Codex は非対話の exec を使う（stdin が terminal でない環境でも動く）
+codex exec "/shin-reviewer $(cat ./docs/{topic}/plan.md)"
+
+# Claude は --print で非対話実行。必要なら HOME を writable に向ける
+mkdir -p ./.tmp/claude-home
+HOME="$PWD/.tmp/claude-home" claude -p "/shin-reviewer $(cat ./docs/{topic}/plan.md)"
 ```
 
 両方のレビュー結果をこのセッションに貼り付けてもらう。
